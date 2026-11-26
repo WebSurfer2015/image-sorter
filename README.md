@@ -1,4 +1,4 @@
-# Stillroom — AI Image Assistant
+# AI Image Sorter
 
 A small FastAPI app for analyzing personal photos and documents with Gemini 3.8 Flash.
 
