@@ -1,5 +1,5 @@
 {
-  "repo_url": "https://github.com/REPLACE_WITH_YOUR_USERNAME/stillroom-image-assistant",
+  "repo_url": "https://github.com/WebSurfer2015/image-sorter",
   "service_name": "stillroom-image-assistant",
   "branch": "main",
   "port": 8000,
