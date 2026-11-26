@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Stillroom — AI Image Assistant</title>
+  <style>
+    :root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1d2925;background:#f5f4ee;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh}header{height:76px;border-bottom:1px solid #e4e4dc;display:flex;align-items:center;justify-content:space-between;padding:0 max(24px,calc((100vw - 1080px)/2));background:#fbfaf6}
+    .brand{font-family:Georgia,serif;font-size:25px;letter-spacing:-.7px}.brand span{color:#778879}.local{font-size:12px;color:#617268;display:flex;gap:8px;align-items:center}.dot{width:8px;height:8px;border-radius:50%;background:#6f9877}
+    main{max-width:980px;margin:0 auto;padding:70px 24px 80px}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;color:#768278;font-weight:650}h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(38px,6vw,58px);letter-spacing:-1.6px;margin:14px 0 12px}.intro{color:#68746d;line-height:1.6;margin:0 0 38px;max-width:560px}
+    .workspace{display:grid;grid-template-columns:1fr 1fr;gap:24px}.panel{background:#fff;border:1px solid #e6e6dd;border-radius:14px;min-height:310px;padding:22px}.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.panel h2{font-size:13px;margin:0;font-weight:650}.hint{color:#89918b;font-size:11px}
+    .drop{border:1px dashed #cbd2c8;border-radius:10px;height:238px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:#fafbf8;cursor:pointer;position:relative}.drop.drag{border-color:#718b73;background:#f1f5ef}.drop img{width:100%;height:100%;object-fit:contain;background:#f6f7f4}.drop-content{padding:20px}.upload-icon{width:42px;height:42px;border-radius:12px;background:#eef2eb;color:#738775;margin:0 auto 12px;display:grid;place-items:center;font-size:22px}.drop strong{display:block;font-size:13px;font-weight:600}.drop small{display:block;margin-top:7px;color:#8a938c;font-size:11px}input[type=file]{display:none}
+    button{border:0;border-radius:8px;background:#40584a;color:white;padding:12px 17px;font-size:12px;font-weight:600;cursor:pointer}button:hover{background:#33483b}button:disabled{opacity:.55;cursor:wait}.analyze{width:100%;margin-top:13px}.placeholder{height:238px;display:grid;place-items:center;text-align:center;color:#9ba39c;font-size:12px;line-height:1.6}.result{display:none}.result-row{padding:13px 0;border-bottom:1px solid #f0f0ea}.label{font-size:10px;text-transform:uppercase;letter-spacing:1.1px;color:#909890;margin-bottom:7px}.value{font-size:13px;line-height:1.5;color:#344239}.tag{display:inline-block;border:1px solid #e4e9e1;border-radius:20px;padding:5px 9px;margin:0 5px 5px 0;background:#f8faf7;color:#5e705f;font-size:10px}.filename{font-family:ui-monospace,monospace;font-size:12px;background:#f4f6f2;border-radius:6px;padding:9px 10px;word-break:break-all}.error{color:#a54f3e;font-size:12px;line-height:1.5;margin-top:12px;display:none}.footnote{font-size:11px;color:#879189;text-align:center;margin-top:26px}
+    @media(max-width:700px){main{padding-top:44px}.workspace{grid-template-columns:1fr;gap:15px}.panel{min-height:unset}.drop,.placeholder{height:210px}.panel.result-panel{min-height:230px}header{height:64px}}
+  </style>
+</head>
+<body>
+  <header><div class="brand">stillroom<span>.</span></div><div class="local"><span class="dot"></span>Runs on your device</div></header>
+  <main>
+    <div class="eyebrow">A calmer way to organize</div>
+    <h1>Make sense of your images.</h1>
+    <p class="intro">Drop in a photo or document. Your local assistant will find the details, describe what matters, and suggest a name that makes it easier to find again.</p>
+    <div class="workspace">
+      <section class="panel">
+        <div class="panel-head"><h2>Your image</h2><span class="hint">PNG, JPG, WEBP · up to 12 MB</span></div>
+        <label class="drop" id="drop" for="file"><div class="drop-content"><div class="upload-icon">↑</div><strong>Choose an image or drop it here</strong><small>Your image is sent securely from this local app for analysis.</small></div></label>
+        <input id="file" type="file" accept="image/*">
+        <button class="analyze" id="analyze" disabled>Analyze image&nbsp; →</button>
+        <div class="error" id="error"></div>
+      </section>
+      <section class="panel result-panel">
+        <div class="panel-head"><h2>Image notes</h2><span class="hint" id="status">Ready when you are</span></div>
+        <div class="placeholder" id="placeholder">Your image category, summary, tags, and a suggested filename<br>will appear here.</div>
+        <div class="result" id="result">
+          <div class="result-row"><div class="label">Category</div><div class="value" id="category"></div></div>
+          <div class="result-row"><div class="label">Summary</div><div class="value" id="summary"></div></div>
+          <div class="result-row"><div class="label">Tags</div><div class="value" id="tags"></div></div>
+          <div class="result-row" style="border:0"><div class="label">Suggested filename</div><div class="filename" id="filename"></div></div>
+        </div>
+      </section>
+    </div>
+    <div class="footnote">Your API key stays on this machine. Image analysis runs through the local backend.</div>
+  </main>
+<script>
+const input=document.querySelector('#file'),drop=document.querySelector('#drop'),button=document.querySelector('#analyze'),error=document.querySelector('#error');let selected=null;
+function choose(file){if(!file)return;if(!file.type.startsWith('image/')){showError('Please choose an image file.');return}selected=file;error.style.display='none';drop.innerHTML='';const img=document.createElement('img');img.alt='Selected image preview';img.src=URL.createObjectURL(file);drop.append(img);button.disabled=false;document.querySelector('#status').textContent='Image selected'}
+function showError(text){error.textContent=text;error.style.display='block'}input.addEventListener('change',()=>choose(input.files[0]));
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag')});drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('drag');choose(e.dataTransfer.files[0])});
+button.addEventListener('click',async()=>{if(!selected)return;button.disabled=true;button.textContent='Analyzing…';error.style.display='none';document.querySelector('#status').textContent='Working…';try{const body=new FormData();body.append('image',selected);const response=await fetch('/api/analyze',{method:'POST',body});const data=await response.json();if(!response.ok)throw Error(data.detail||'Could not analyze this image.');for(const key of ['category','summary','filename'])document.querySelector('#'+key).textContent=key==='filename'?data.suggested_filename:data[key];const tags=document.querySelector('#tags');tags.replaceChildren(...data.tags.map(tag=>{const el=document.createElement('span');el.className='tag';el.textContent=tag;return el}));document.querySelector('#placeholder').style.display='none';document.querySelector('#result').style.display='block';document.querySelector('#status').textContent='Analysis complete'}catch(e){showError(e.message);document.querySelector('#status').textContent='Could not complete'}finally{button.disabled=false;button.textContent='Analyze image  →'}});
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "repo_url": "https://github.com/REPLACE_WITH_YOUR_USERNAME/stillroom-image-assistant",
+  "service_name": "stillroom-image-assistant",
+  "branch": "main",
+  "port": 8000,
+  "env_vars": {}
+}

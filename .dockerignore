@@ -1,0 +1,14 @@
+.git
+.env
+.mcp.json
+.venv
+__pycache__
+*.py[cod]
+test_images
+test-images
+tests/images
+sample_images
+**/*test*.png
+**/*test*.jpg
+**/*test*.jpeg
+**/*test*.webp

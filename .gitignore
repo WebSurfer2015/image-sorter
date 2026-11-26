@@ -1,0 +1,19 @@
+.env
+.mcp.json
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+# Keep sample and test images out of version control
+test_images/
+tests/images/
+sample_images/
+test-images/
+**/test_images/
+**/tests/images/
+**/test-images/
+**/*test*.png
+**/*test*.jpg
+**/*test*.jpeg
+**/*test*.webp
+*.test-image
