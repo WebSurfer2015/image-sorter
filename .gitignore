@@ -7,7 +7,7 @@ __pycache__/
 # Keep sample and test images out of version control
 test_images/
 tests/images/
-sample_images/
+sample-images/
 test-images/
 **/test_images/
 **/tests/images/

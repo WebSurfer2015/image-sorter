@@ -7,7 +7,7 @@ __pycache__
 test_images
 test-images
 tests/images
-sample_images
+sample-images
 **/*test*.png
 **/*test*.jpg
 **/*test*.jpeg
